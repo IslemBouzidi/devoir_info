@@ -24,18 +24,20 @@ classe *readlocal(classe *t){
     FILE *fic =fopen("locaux.txt", "r");// opening file
     if (fic == NULL){//unfound file error raising
         printf("unfound file Error, please put the file \"locaux.txt\" in the folder\n");
+        fclose(fic);
         return NULL;
     }
     do{ // reading the file char by char
         lettre = fgetc(fic);
         if(lettre == 9 || lettre == 10 || lettre == 255){// gestion of tabulation and back to the line or end of file
-            word[j] = 0; //end of red word
+            word[j] = 0; //end of read word
             switch (type_index){
             case 0://id
                 if(class_index){// add an element in class_tab if it isn't the first data line classe_tab contains already one element
                 t = append_class(t);
                 if(t == NULL){//lack of storage error raising
                     printf("insufisent storage error, may the file contains too much data\n");
+                    fclose(fic);
                     return NULL;}
                 }
                 t[class_index].id = atoi(word); 
@@ -207,6 +209,7 @@ student *readeleve(student *t){
     FILE *fic =fopen("eleves.txt", "r");// opening file
     if (fic == NULL){//unfound file error raising
         printf("unfound file Error, please put the file \"eleves.txt\" in the folder\n");
+        fclose(fic);
         return NULL;
     }
     do{ // reading the file char by char
@@ -219,6 +222,7 @@ student *readeleve(student *t){
                 t = append_stud(t);
                 if(t == NULL){//lack of storage error raising
                     printf("insufisent storage error, may the file contains too much data\n");
+                    fclose(fic);
                     return NULL;}
                 }
                 strcpy(t[stu_index].name ,word); 
@@ -256,9 +260,24 @@ student *append_stud(student *t){
 
  
 //other
-unsigned char ask(unsigned char task){
-    printf("task :");
+unsigned char ask(unsigned char request[]){
+    /* this fontcion is called to read one char input on the keyboard and empty the buffer by fflush()
+    in stdlib library and take one string argument "the request"*/
+    unsigned char task;
+    if(request == NULL)continue;
+    else printf("%s :", request);
     task = getchar();
+    fflush(stdin);//our hero nhabek hbibi
+    return task;    
+}
+
+unsigned char* ask_s(unsigned short range ,unsigned char request[]){
+    /* this fontcion is called to read one string input of (range -1) maximum range on the keyboard and 
+    empty the buffer by fflush() in stdlib library and take one string argument "the request"*/
+    unsigned char task[range];
+    if(request == NULL)continue;
+    else printf("%s :", request);
+    task = gets(stdin);
     fflush(stdin);//our hero nhabek hbibi
     return task;    
 }
