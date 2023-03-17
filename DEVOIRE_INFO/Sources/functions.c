@@ -74,7 +74,7 @@ classe *append_class(classe *t){
     size_t size;
     size = _msize(t) + sizeof(classe);
     t = (classe *)realloc(t, size);
-    t[_msize(t)/sizeof(classe)-1].id = 0; //init on 0 private id 
+    //t[_msize(t)/sizeof(classe)-1].id = 0; //init on 0 private id 
     return t;
 }
 
