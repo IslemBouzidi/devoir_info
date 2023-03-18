@@ -81,13 +81,14 @@ classe *append_class(classe *t){
 
 void local_menu(classe *tab){
     unsigned char task = 0, name0[20], used0 = 0;
-    unsigned short id = 0, idm = 0;
+    unsigned short id1 = 0, idm = 0;
     unsigned int nm;
     clear();
     local_print();
-    task = ask(task);
+    task = ask("task");
     switch (task){
-        case 'R'://return to the main menu
+
+    case 'R'://return to the main menu
             break;
 
     case 'L':
@@ -98,7 +99,21 @@ void local_menu(classe *tab){
         break;
 
     case 'A':
-        printf("");
+        clear();
+        printf("veuillez entrer les caracteristique de la nouvelle classe :");
+        tab = append_class(tab);
+        id1 = _msize(tab) / sizeof(classe) -1;
+        idm = ask_d("\nid");
+        ask_s(name0, "\nname");
+        nm = ask_d("\nnumber of places");
+        task = ask("\nused[y/n]");
+            if(task =='y')used0 = 1;
+            else if (task == 'n')used0 = 0;
+            else break;
+        if (!modif(tab,id1,idm, name0, nm, used0))printstruct(tab);
+        printf("press enter to return to the local menu \n");
+        while (getch() != 13)continue;
+        local_menu(tab);
         break;
 
     case 'S':
@@ -106,77 +121,65 @@ void local_menu(classe *tab){
 
     case 'M':
         clear();
-        printf("enter the id of the local you want to modify :");
-        scanf("%d", &id);//note for future we should raise an error if not available
-       // if(checkid(tab,id) == -1) break;
-        printf("\n\nchange the id[y/n]");
-
-        fflush(stdin);
-        task = getchar();
-
-        if(task =='y'){
-            printf("\nid :");
-            scanf("%d",&idm);
+        id1 = ask_d("enter the id of the local you want to modify");
+        id1 = checkid(tab,id1);
+        if(id1 == -1){
+            printf("error : invalid id try again");
+            break;
         }
-        else if (task == 'n')idm = tab[id].id;
+
+        task = ask("change the id[y/n]");
+        if(task =='y')idm = ask_d("\nid");
+        else if (task == 'n')idm = tab[id1].id;
         else break;
 
-        printf("\n\nchange the name[y/n]");
-        fflush(stdin);
-        task = getchar();
-
-        if(task =='y'){
-            printf("\nname :");
-            gets(name0);
-        
-        }
-        else if (task == 'n')strcpy(name0 ,tab[id].name);
+        task = ask("\n\nchange the name[y/n]");
+        if(task =='y')ask_s(name0, "\nname");
+        else if (task == 'n')strcpy(name0 ,tab[id1].name);
         else break;
 
-        printf("\n\nchange the number of classe[y/n]");
-        task = getchar();
-        getchar();
+        task = ask("\n\nchange the number of places[y/n]");
+        if(task =='y')nm = ask_d("\nnumber of places");
 
-        if(task =='y'){
-            printf("\nnumber of classe :");
-            scanf("%d", &nm);
-        }
-        else if (task == 'n')nm = tab[id].nmax;
+        else if (task == 'n')nm = tab[id1].nmax;
         else break;
 
-        printf("\n\nchange the classe's state[y/n]");
-        task = getchar();
-        getchar();
-
+        task = ask("\n\nchange the classe's state[y/n]");
         if(task =='y'){
-            printf("\nused[y/n]:");
-            task = getchar();
+            task = ask("\nused[y/n]");
             if(task =='y')used0 = 1;
-            else if (task == 'n')used0 = 2;
+            else if (task == 'n')used0 = 0;
             else break;
             }
-        else if (task == 'n')nm = idm = tab[id].nmax;
+        else if (task == 'n')used0= tab[id1].used;
         else break;
-        if (modif(tab, tab[id],idm, name0, nm, used0))
+
+        if (!modif(tab,id1,idm, name0, nm, used0))printstruct(tab);
+        printf("press enter to return to the local menu \n");
+        while (getch() != 13)continue;
+        local_menu(tab);
         break;
+
     default:
-            break;
-
-
+        local_menu(tab);
+        break;
     }
 }
 
-int modif(classe *ct,classe t, unsigned short id0 ,unsigned char name0[], unsigned int nmax0, unsigned char used0){
-    if ((id0 != 0)&&(checkid(ct,id0) != -1)&&(id0 != t.id))t.id = id0;
-    else{
-        printf("error :id invalide try agin you loose little pogger");
+int modif(classe *ct,int index, unsigned short id0 ,unsigned char name0[], unsigned int nmax0, unsigned char used0){
+    if (id0 == 0){
+        printf("\nerror :id invalide try agin you loose little pogger");
         return 1;
     }
-    if(nmax0 != t.nmax)t.nmax = nmax0;
-    if (used0 != t.used)t.used = used0;
-    if (strlen(name0) < sizeof(t.name) && !strcmp(t.name , name0))strcpy(t.name , name0);
+    else if(id0 != ct[index].id)ct[index].id = id0;
+
+    if(nmax0 != ct[index].nmax)ct[index].nmax = nmax0;
+
+    if (used0 != ct[index].used)ct[index].used = used0;
+
+    if (strlen(name0) < sizeof(ct[index].name) && strcmp(ct[index].name , name0) && name0 != NULL )strcpy(ct[index].name , name0);
     else{
-        printf("error : too long name, try again little brat ");
+        printf("\nerror : too long name, try again little brat ");
         return 1;
     }
 
@@ -264,20 +267,29 @@ unsigned char ask(unsigned char request[]){
     /* this fontcion is called to read one char input on the keyboard and empty the buffer by fflush()
     in stdlib library and take one string argument "the request"*/
     unsigned char task;
-    if(request == NULL)continue;
-    else printf("%s :", request);
+    if(request != NULL) printf("%s :", request);
     task = getchar();
     fflush(stdin);//our hero nhabek hbibi
     return task;    
 }
 
-unsigned char* ask_s(unsigned short range ,unsigned char request[]){
-    /* this fontcion is called to read one string input of (range -1) maximum range on the keyboard and 
-    empty the buffer by fflush() in stdlib library and take one string argument "the request"*/
-    unsigned char task[range];
-    if(request == NULL)continue;
-    else printf("%s :", request);
-    task = gets(stdin);
+unsigned char* ask_s(unsigned char *task ,unsigned char request[]){
+    /* this fontcion scanf on the keybord a string and place it on the adress task and also empty the buffer*/
+    unsigned char i= 0;
+    if(request != NULL) printf("%s :", request);
+    fgets(task,20,stdin);
+    for(i; i<20; i++){
+        if(task[i] == 10)task[i] = 0;// to fix a bug:fgets read also the back to line char
+    }
     fflush(stdin);//our hero nhabek hbibi
     return task;    
+}
+unsigned int ask_d(unsigned char request[]){
+    /* this fontcion is called to read one char input on the keyboard and empty the buffer by fflush()
+    in stdlib library and take one string argument "the request"*/
+    unsigned int i;
+    if(request != NULL) printf("%s :", request);
+    scanf("%d",&i);
+    fflush(stdin);//our hero nhabek hbibi
+    return i;
 }

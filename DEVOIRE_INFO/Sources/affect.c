@@ -32,8 +32,7 @@ int main(void)
 
     // part two, main manu 
 
-    unsigned char task;
-    char run = 1;
+    unsigned char task,run = 1;
 
     while(run){//infinite loop
         clear();
@@ -43,21 +42,24 @@ int main(void)
         case 'S'://sortie
             run = 0;
             break;
+
         case 'L'://
             local_menu(class_tab);
             break;
+
         case 'P':
             clear();
             list_print();
-            task = ask(task);
+            task = ask("task");
             break;
+
         case 'E':
             break;
+
         default:
             printf("saisie invalide");
             break;
-        } 
-        task = 0;
+        }
     }
 
     free(class_tab);
@@ -65,5 +67,3 @@ int main(void)
 
     return 0;
 }
-
-

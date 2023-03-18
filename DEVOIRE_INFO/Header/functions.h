@@ -9,9 +9,10 @@ classe *append_class(classe *t);
 student *readeleve(student *);
 student *append_stud(student *);
 unsigned char ask(unsigned char request[]);
-unsigned char* ask_s(unsigned short range ,unsigned char request[]);
+unsigned char* ask_s(unsigned char * ,unsigned char request[]);
+unsigned int ask_d(unsigned char request[]);
 void local_menu(classe *tab);
-int modif(classe *ct,classe t, unsigned short id0 ,unsigned char name0[], unsigned int nmax0, unsigned char used0);
+int modif(classe *ct,int index, unsigned short id0 ,unsigned char name0[], unsigned int nmax0, unsigned char used0);
 int checkid(classe *ct ,unsigned short n);
 
 #endif

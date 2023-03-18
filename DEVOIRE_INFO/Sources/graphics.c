@@ -9,7 +9,8 @@
 void printstruct(classe *strct){//afficher la tableau des classe
     int i = 0, size;
     size = _msize(strct) / sizeof(classe);
-    for(i = 0; i < size; i++ )printf("id :%d\tname :%s\tnmax :%d\tused :%d\n",strct[i].id,strct[i].name, strct[i].nmax, strct[i].used );
+    for(i = 0; i < size; i++ )printf("identifiant :%d\tnom :%s\tnombre de places :%d\tutilise :%d\n",strct[i].id,strct[i].name, strct[i].nmax, strct[i].used );
+    return ;
 }
 void printstruct2(student strct){
     printf("name :%s\nsurname :%s\ngroupe:%d\n",strct.name,strct.surname, strct.groupe);
