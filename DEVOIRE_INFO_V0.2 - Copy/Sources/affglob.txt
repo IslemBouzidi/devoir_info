@@ -1,0 +1,3 @@
+nom:abdoun	prenom:sani	groupe:1	local:amphi02	emplacement:4
+nom:bouzidi	prenom:abdo	groupe:4	local:amphi02	emplacement:83
+nom:bouzidi	prenom:islem	groupe:4	local:amphi02	emplacement:40
