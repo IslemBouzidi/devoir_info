@@ -1,2 +1,0 @@
-emplacement:25	nom:bouzidi	 prenom:islem	 groupe:4	 
-emplacement:29	nom:abdoun	 prenom:sami	 groupe:1	 
