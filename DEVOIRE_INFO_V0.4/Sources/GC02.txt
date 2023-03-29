@@ -1,0 +1,2 @@
+emplacement:15	nom:bouzidi	 prenom:abdo	 groupe:4	 
+emplacement:32	nom:bouzidi	 prenom:abdo	 groupe:4	 

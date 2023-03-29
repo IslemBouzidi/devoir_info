@@ -1,0 +1,6 @@
+nom:abdoun	 prenom:sami	 groupe:1	 local:amphi02	 emplacement:3 
+nom:abdoun	 prenom:sami	 groupe:1	 local:GC14	 emplacement:29 
+nom:bouzidi	 prenom:islem	 groupe:4	 local:amphi02	 emplacement:7 
+nom:bouzidi	 prenom:abdo	 groupe:4	 local:GC02	 emplacement:32 
+nom:bouzidi	 prenom:abdo	 groupe:4	 local:GC02	 emplacement:15 
+nom:bouzidi	 prenom:islem	 groupe:4	 local:GC14	 emplacement:25 

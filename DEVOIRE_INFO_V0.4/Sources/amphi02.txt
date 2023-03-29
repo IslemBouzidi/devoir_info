@@ -1,0 +1,2 @@
+emplacement:3	nom:abdoun	 prenom:sami	 groupe:1	 
+emplacement:7	nom:bouzidi	 prenom:islem	 groupe:4	 
