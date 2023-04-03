@@ -22,7 +22,8 @@ classe *readlocal(classe *t){
        close the file
        return the pointer of the classified ,filled classe table (classe *)
     */
-    unsigned char class_index = 0, lettre = 0,type_index = 0, word[32], j = 0;
+    unsigned short class_index = 0;
+    unsigned char lettre = 0,type_index = 0, word[32], j = 0;
 
     FILE *fic =fopen("locaux.txt", "r");// opening file
 
@@ -299,7 +300,8 @@ student *readeleve(student *t){
        close the file
        return the pointer of the classified ,filled classe table (classe *)
     */
-    unsigned char stu_index = 0, lettre = 0,type_index = 0, word[32], j = 0;
+    unsigned short stu_index = 0;
+    unsigned char lettre = 0,type_index = 0, word[32], j = 0;
     FILE *fic =fopen("eleves.txt", "r");// opening file
     if (fic == NULL){//unfound file error raising
         printf("unfound file Error, please put the file \"eleves.txt\" in the folder\n");
