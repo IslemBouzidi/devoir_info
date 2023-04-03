@@ -29,4 +29,5 @@ int list_global(affectation *affect);
 void savelocal(classe *tab);
 void ask_to_save(classe *tab);
 unsigned int ask_f(unsigned char request[]);
+char emp_error(emplacement *t1, student *t2);
 #endif

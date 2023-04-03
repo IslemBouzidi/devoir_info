@@ -84,7 +84,7 @@ int main(void)
                 emp_tab =(emplacement *)calloc(1 , sizeof(emplacement));//init emp_tab at one element for further use
                 break;
             }
-            if(_msize(stu_tab)/sizeof(student) > _msize(emp_tab)/sizeof(emplacement)){
+            if(emp_error(emp_tab,stu_tab)){
                 printf("\nerror not enough emplacemets for student please add more places ");
                 getch();
                 break;

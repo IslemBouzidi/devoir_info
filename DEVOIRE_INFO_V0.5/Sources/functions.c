@@ -414,54 +414,33 @@ emplacement *place_list(emplacement *tab , classe *a, float pourcentage){ //tab 
         la liste tab est deja randomisé*/
     unsigned char task;
     size_t size =_msize(a)/sizeof(classe);
-    int i , j , k =0, n; 
-    unsigned short *tab_temp = NULL, index;
-    tab_temp = (unsigned short *)calloc(1,sizeof(short));
-    srand(time(NULL));
+    int i, k =0, n; 
+    unsigned int index;
     for(i = 0 ; i < size; i++){
         if(!a[i].used){
             printf("\nid of classe :%d ",a[i].id);
             task = ask("should I take this classe in consideration[y/n]");
             if( task =='y'){
                 n = ceil(a[i].nmax*pourcentage/100);
-                tab = (emplacement *)realloc(tab, _msize(tab) + n*sizeof(emplacement));
+                tab = (emplacement *)realloc(tab, _msize(tab) + sizeof(emplacement));
                 if(tab == NULL){
                     printf("\nerror :not enough storage");
                     printf("\npress enter to return to the main menu");
                     while (getch() != 13)continue;
-                    kill(tab_temp);
                     return NULL;
                 }
-                tab_temp = (unsigned short *)realloc(tab_temp,sizeof(short) * a[i].nmax);
-                if(tab_temp == NULL){
-                    printf("\nerror :not enough storage");
-                    printf("\npress enter to return to the main menu");
-                    while (getch() != 13)continue;
-                    kill(tab_temp);
-                    return NULL;
-                }
-                for(j = 0; j < a[i].nmax ; j++ ){ // remplissage de tab_temp
-                    tab_temp[j] = j +1;
-                }
-
-                for(j = 0; j < n ; j++ ){
-                    index = rand() % (a[i].nmax - j);
-                    strcpy(tab[k].nlocal , a[i].name);
-                    tab[k].emp = tab_temp[index];
-                    tab_temp[index] = tab_temp[a[i].nmax - j - 1];
-                    k++;
-                }
-
+                strcpy(tab[k].nlocal , a[i].name);
+                tab[k].emp = n;
+                tab[k].count = 1; //init the count at one for randomlocal()
+                k++;
             }
             else if (task == 'n')continue;
             else {
                 printf("\nincorrect answer please try again");
-                kill(tab_temp);
                 return NULL;
             }
         }
     }
-    kill(tab_temp);
     tab = (emplacement *)realloc( tab,_msize(tab)-sizeof(emplacement)); //raise error if NULL
     if(tab == NULL){
         printf("\nerror :not enough storage");
@@ -472,15 +451,25 @@ emplacement *place_list(emplacement *tab , classe *a, float pourcentage){ //tab 
     return tab ;
 }
 
+char emp_error(emplacement *t1, student *t2){
+    int j, sum = 0;
+    for(j = 0; j < _msize(t1)/sizeof(emplacement) ; j++)sum += t1[j].emp;
+    if (sum >= _msize(t2)/sizeof(student))return 0;//valid
+    else return 1;//nope
+}
 void randomlocal(emplacement *a, affectation *b){
-    srand(time(NULL));
     int i, n =_msize(a)/sizeof(emplacement) , m= _msize(b)/sizeof(affectation), index ;
+    srand(time(NULL));
     for(i = 0 ; i < m  ; i++){
-        index = rand() % (n-i);  // if k is too big behind rand() we have to change rand()
+        index = rand() % (n);  // if k is too big behind rand() we have to change rand()
         strcpy(b[i].nlocal, a[index].nlocal);
-        b[i].emp = a[index].emp;
-        strcpy(a[index].nlocal, a[n-i-1].nlocal);
-        a[index].emp = a[n-i-1].emp;
+        b[i].emp = a[index].count;
+        a[index].count++;
+        if (a[index].emp == a[index].count){
+            strcpy(a[index].nlocal, a[n-1].nlocal);
+            a[index].emp = a[n-1].emp;
+            n--;
+        }
     }
 }
 

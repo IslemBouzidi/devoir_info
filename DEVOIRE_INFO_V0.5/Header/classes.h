@@ -26,6 +26,7 @@ typedef struct affectation{
 typedef struct emplacement{
     unsigned char nlocal[16];
     unsigned int emp;
+    unsigned int count;
 } emplacement;
 
 
