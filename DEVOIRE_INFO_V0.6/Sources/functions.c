@@ -467,6 +467,7 @@ void randomlocal(emplacement *a, affectation *b){
         if (a[index].emp == a[index].count){
             strcpy(a[index].nlocal, a[n-1].nlocal);
             a[index].emp = a[n-1].emp;
+            a[index].count = a[n-1].count;
             n--;
         }
     }
