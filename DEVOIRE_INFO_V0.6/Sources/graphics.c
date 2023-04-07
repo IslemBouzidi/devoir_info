@@ -9,14 +9,14 @@
 void printstruct(classe *strct){//afficher la tableau des classe
     int i = 0, size;
     size = _msize(strct) / sizeof(classe);
-    for(i = 0; i < size; i++ )printf("identifiant :%d\tnom :%s\tnombre de places :%d\tutilise :%d\n",strct[i].id,strct[i].name, strct[i].nmax, strct[i].used );
+    for(i = 0; i < size; i++ )printf("identifiant :%-10d\tnom :%-10s\tnombre de places :%-10d\tutilise :%-10d\n",strct[i].id,strct[i].name, strct[i].nmax, strct[i].used );
     return ;
 }
 
-void printaffect( affectation *affect){//afficher la tableau des classe
+void printaffect( affectation *affect){//afficher la tableau des emplacement 
     int j=0, size;
     size = _msize(affect) / sizeof(affectation);
-    for(j= 0; j < size; j++ )printf("Nom :%s\tPrenom :%s\tGroupe :%d\tLocal :%s\tEmplacement :%d\n",affect[j].name,affect[j].surname,affect[j].groupe,affect[j].nlocal, affect[j].emp);
+    for(j= 0; j < size; j++ )printf("Nom :%-20s\tPrenom :%-20s\tGroupe :%-5d\tLocal :%-5s\tEmplacement :%-5d\n",affect[j].name,affect[j].surname,affect[j].groupe,affect[j].nlocal, affect[j].emp);
      
 }
 void main_print(){
