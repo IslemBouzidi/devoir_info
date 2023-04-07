@@ -1,107 +1,102 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <malloc.h>
-#include <windows.h>
 #include <conio.h>
 #include "..\Header\classes.h"
 #include "..\Header\functions.h"
 #include "..\Header\graphics.h"
 
+
 // main fonction
-int main(void)
-{
-    // declarations
-    classe *class_tab = NULL;
-    student *stu_tab = NULL;
+int main(void){
+    // declarations/creation of one element table
+    classe *class_tab = (classe *)calloc(1, sizeof(classe));
+    student *stu_tab = (student *)calloc(1, sizeof(student));
     affectation *affect_tab = NULL;
-    emplacement *emp_tab = NULL;
-    unsigned char task,run = 1, bool_local = 1, bool_stu = 1;
+    emplacement *emp_tab = (emplacement *)calloc(1 , sizeof(emplacement));
+    unsigned char task = 0, run = 1, bool_local = 1, bool_stu = 1;
     float pct = 100;
 
-    // creation of one element's table
-    class_tab = (classe *)calloc(1, sizeof(classe)); 
-    stu_tab = (student *)calloc(1, sizeof(student));
-    emp_tab =(emplacement *)calloc(1 , sizeof(emplacement));
-
-    // error raising
-    if (class_tab == NULL || stu_tab == NULL || emp_tab == NULL){
+    if (class_tab == NULL || stu_tab == NULL || emp_tab == NULL){//error raising
         printf("\ninsufisent storage");
         exit(1);
     }
+
     //infinite loop /main menu
     while(run){
-
-        clear();
-        main_print();
-        task = ask("task");//task is a char
+        clear();//cleaning the prompt
+        main_print();//main menu print
+        task = ask("task");
 
         switch (task){
-
-        case 'S'://sortie
+        case 'S': //sortie
             run = 0;
             break;
 
-        case 'L'://local
-            //reading local.txt for the first time
-            if (bool_local){
+        case 'L': //local
+            if (bool_local){//reading "local.txt" for the first time
                 class_tab = readlocal(class_tab);//init the classified tab of classes
-                if (stu_tab == NULL)run =0 ;//type error handled in the function readlocal()
+                if (stu_tab == NULL)run =0 ;//error raising for more details check readlocal()
                 else bool_local = 0;
             }
-            local_menu(class_tab);
+            local_menu(class_tab);//recursive function
             break;
 
         case 'P':
-            list_menu(affect_tab, class_tab);
+            list_menu(affect_tab, class_tab);//recursive function
             break;
 
         case 'E':
-            if (bool_stu){
+            if (bool_stu){//reading "eleve.txt" for the first time
                 stu_tab = readeleve(stu_tab);//init the classified tab of students
-                if (stu_tab == NULL)run =0 ;//type error handled in the function readlocal()
+                if (stu_tab == NULL)run =0 ;//error raising for more details check readeleve()
                 else bool_stu = 0;
             }
-            if (bool_local){
+            if (bool_local){//reading "local.txt" for the first time
                 class_tab = readlocal(class_tab);//init the classified tab of classes
-                if (stu_tab == NULL)run =0 ;//type error handled in the function readlocal()
+                if (stu_tab == NULL)run =0 ;//error raising for more details check readlocal()
                 else bool_local = 0;
             }
-            clear();
 
+            clear();//clean the prompt
             if (affect_tab != NULL)kill(affect_tab);//checking if affect tab were filled before 
-            affect_tab = (affectation *)calloc(1, sizeof(affectation));//init affect_tab
+            affect_tab = (affectation *)calloc(1, sizeof(affectation));//init affect_tab by allocating one element
 
-            // error raising
-            if (affect_tab == NULL){
+            if (affect_tab == NULL){// error raising
                 printf("\ninsufisent storage");
-                exit(1);
+                printf("\npress enter to return to the main menu");
+                while (getch() != 13)continue;
+                break;
             }
 
-            pct = ask_f("entrez le poucentage(de 0 jusqu'a 100) du nombre de places disponible que ne doit pas depasser chaque locale");
-            emp_tab = place_list(emp_tab, class_tab, pct);//the choice of classes is handled in place_list()
-            if(emp_tab == NULL){
+            pct = ask_f("enter a percentage(range :0 to 100) of available places that each classe must not exceed");
+            emp_tab = place_list(emp_tab, class_tab, pct);//filling an table of all available place check place_list()
+            if(emp_tab == NULL){//error raising
                 emp_tab =(emplacement *)calloc(1 , sizeof(emplacement));//init emp_tab at one element for further use
+                printf("\ninsufisent storage");
+                printf("\npress enter to return to the main menu");
+                while (getch() != 13)continue;
                 break;
             }
-            if(emp_error(emp_tab,stu_tab)){
+            if(emp_error(emp_tab,stu_tab)){//check if we have enough places for student
                 printf("\nerror not enough emplacemets for student please add more places ");
-                getch();
+                printf("\npress enter to return to the main menu");
+                while (getch() != 13)continue;
                 break;
             }
-            affect_tab = init_affect(affect_tab,stu_tab);
-            randomlocal(emp_tab, affect_tab);
-            printaffect(affect_tab);
-            affectation_list(affect_tab);
-            emp_tab = (emplacement *)realloc(emp_tab, sizeof(emplacement));// reallocate one element (init)
-
+            affect_tab = init_affect(affect_tab,stu_tab);//init affect_tab(name, surname, groupe) check init_affect()
+            randomlocal(emp_tab, affect_tab);//randomize places 
+            printaffect(affect_tab);//printing affect_tab
+            affectation_list(affect_tab);//writing "affectation.txt"
+            
             printf("\npress enter to return to the local menu");
             while (getch() != 13)continue;
             break;
 
         default:
             printf("\nsaisie invalide");
-            getch();
+            printf("\npress enter to return to the local menu");
+            while (getch() != 13)continue;
             break;
         }
     }
