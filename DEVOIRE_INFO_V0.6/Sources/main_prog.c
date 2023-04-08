@@ -18,7 +18,7 @@ int main(void){
     float pct = 100;
 
     if (class_tab == NULL || stu_tab == NULL || emp_tab == NULL){//error raising
-        printf("\ninsufisent storage");
+        printf("\nerror :insufisent storage");
         exit(1);
     }
 
@@ -63,7 +63,7 @@ int main(void){
             affect_tab = (affectation *)calloc(1, sizeof(affectation));//init affect_tab by allocating one element
 
             if (affect_tab == NULL){// error raising
-                printf("\ninsufisent storage");
+                printf("\nerror :insufisent storage");
                 printf("\npress enter to return to the main menu");
                 while (getch() != 13)continue;
                 break;
@@ -73,13 +73,13 @@ int main(void){
             emp_tab = place_list(emp_tab, class_tab, pct);//filling an table of all available place check place_list()
             if(emp_tab == NULL){//error raising
                 emp_tab =(emplacement *)calloc(1 , sizeof(emplacement));//init emp_tab at one element for further use
-                printf("\ninsufisent storage");
+                printf("\nerror :insufisent storage");
                 printf("\npress enter to return to the main menu");
                 while (getch() != 13)continue;
                 break;
             }
             if(emp_error(emp_tab,stu_tab)){//check if we have enough places for student
-                printf("\nerror not enough emplacemets for student please add more places ");
+                printf("\nerror :not enough emplacemets for student please add more places ");
                 printf("\npress enter to return to the main menu");
                 while (getch() != 13)continue;
                 break;
@@ -89,13 +89,13 @@ int main(void){
             printaffect(affect_tab);//printing affect_tab
             affectation_list(affect_tab);//writing "affectation.txt"
             
-            printf("\npress enter to return to the local menu");
+            printf("\npress enter to return to the main menu");
             while (getch() != 13)continue;
             break;
 
         default:
-            printf("\nsaisie invalide");
-            printf("\npress enter to return to the local menu");
+            printf("\nerror :invalide seizure");
+            printf("\npress enter to return to the main menu");
             while (getch() != 13)continue;
             break;
         }

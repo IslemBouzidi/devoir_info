@@ -97,24 +97,25 @@ classe *append_class(classe *t){
 
 
 void local_menu(classe *tab){
-    //declaration
+    /*recursive function whiche manage:
+      back to main menu
+      listing locals
+      modifying adding deleting locals
+      take as argument a classe's table pointer *tab
+      */
     unsigned char task = 0, name0[20], used0 = 0;
     int nm, id1 = 0, idm = 0;
     
-
-    //menu
     clear();
-    local_print();
-    task = ask("task");
+    local_print();//print menu
+    task = ask("task");//request
 
     switch (task){
-
     case 'R'://return to the main menu
             break;
 
     case 'L'://listing the locals done
-
-        printstruct(tab);
+        printstruct(tab);//print
         printf("\npress enter to return to the local menu");
         while (getch() != 13)continue;
         local_menu(tab);
@@ -122,8 +123,8 @@ void local_menu(classe *tab){
 
     case 'A':// Adding local
         clear();
-        tab = append_class(tab);
-        if(tab == NULL){
+        tab = append_class(tab);//add one classe to tab
+        if(tab == NULL){//error raising
             printf("\nerror : not enough storage");
             printf("\npress enter to return to the local menu");
             while (getch() != 13)continue;
@@ -131,28 +132,27 @@ void local_menu(classe *tab){
             break;
         }
 
-        printf("veuillez entrer les caracteristique de la nouvelle classe :");
-        id1 = _msize(tab)/sizeof(classe) -1;
-        printf("%d", id1);
-        idm = ask_d("\nid");
+        printf("\nenter the data of the new classe :");
+        id1 = _msize(tab)/sizeof(classe) -1;//id1 take the index of last class in tab ==> the added one just before  = len(tab)-1
+        idm = ask_d("\nid");//id
 
-        if(checkid(tab,idm) != -1){
-            printf("\nerror : id alreadu used try again");
+        if(checkid(tab,idm) != -1){//check if this id exist check checkid() for more details
+            printf("\nerror : id already used try again");//error raising
             printf("\npress enter to return to the local menu");
             while (getch() != 13)continue;
             local_menu(tab);
             break;
         }
 
-        ask_s(name0, "\nname");
-        nm = ask_d("\nnumber of places");
-        task = ask("\nused[y/n]");
+        ask_s(name0, "\nname");//name
+        nm = ask_d("\nnumber of places");//nmax
+        task = ask("\nused[y/n]");//used
             if(task =='y')used0 = 1;
             else if (task == 'n')used0 = 0;
-            else break;
+            else break;//error
 
-        if (!modif(tab,id1,idm, name0, nm, used0))printstruct(tab);
-        ask_to_save(tab);
+        if (!modif(tab,id1,idm, name0, nm, used0))printstruct(tab);//modifying the added classe check modif() for more details
+        ask_to_save(tab);//save in "locaux.txt" check ask_to_save() for more details
         printf("press enter to return to the local menu");
         while (getch() != 13)continue;
         local_menu(tab);
@@ -160,17 +160,17 @@ void local_menu(classe *tab){
 
     case 'S': // deleting local
         clear();
-        id1 = ask_d("enter the id of the local you want to delete");
-        id1 = checkid(tab,id1);
-        if(id1 == -1){
+        id1 = ask_d("enter the id of the local you want to delete");// the id of classe we want to delete
+        id1 = checkid(tab,id1);//check if this id exist and returning his index in tab
+        if(id1 == -1){//error raising for more details check checkid()
             printf("\nerror : invalid id try again");
             printf("\npress enter to return to the local menu");
             while (getch() != 13)continue;
             local_menu(tab);
             break;
         }
-        tab = delete(tab, id1);
-        ask_to_save(tab);
+        tab = delete(tab, id1);//deleting the classse
+        ask_to_save(tab);//save in "locaux.txt" check ask_to_save() for more details 
         printf("\npress enter to return to the local menu");
         while (getch() != 13)continue;
         local_menu(tab);
@@ -178,82 +178,89 @@ void local_menu(classe *tab){
 
     case 'M': // nodify a local
         clear();
-        id1 = ask_d("enter the id of the local you want to modify");
-        id1 = checkid(tab,id1);
-        if(id1 == -1){
+        id1 = ask_d("enter the id of the local you want to modify");//the id of classe you want to modify
+        id1 = checkid(tab,id1);//returning his index in *tab
+        if(id1 == -1){//error raising for more details check checkid() 
             printf("\nerror : invalid id try again");
-            printf("press enter to return to the local menu \n");
+            printf("\npress enter to return to the local menu");
             while (getch() != 13)continue;
             local_menu(tab);
             break;
         }
 
-        task = ask("change the id[y/n]");
-        if(task =='y')idm = ask_d("\nid");
-        else if (task == 'n')idm = tab[id1].id;
-        else break;
+        task = ask("change the id[y/n]");//ask if we want to change it
+        if(task =='y')idm = ask_d("\nid");//taking the new id
+        else if (task == 'n')idm = tab[id1].id;//keeping the old id(actual id)
+        else break;//error
 
-        task = ask("\n\nchange the name[y/n]");
-        if(task =='y')ask_s(name0, "\nname");
-        else if (task == 'n')strcpy(name0 ,tab[id1].name);
-        else break;
+        task = ask("\n\nchange the name[y/n]");//ask if we want to change it
+        if(task =='y')ask_s(name0, "\nname");//taking the new name
+        else if (task == 'n')strcpy(name0 ,tab[id1].name);//keeping the old name(actual name)
+        else break;//error
 
-        task = ask("\n\nchange the number of places[y/n]");
-        if(task =='y')nm = ask_d("\nnumber of places");
+        task = ask("\n\nchange the number of places[y/n]");//ask if we want to change it
+        if(task =='y')nm = ask_d("\nnumber of places");//taking the new nmax
+        else if (task == 'n')nm = tab[id1].nmax;//keeping the old nmax(actuall nmax)
+        else break;//error
 
-        else if (task == 'n')nm = tab[id1].nmax;
-        else break;
-
-        task = ask("\n\nchange the classe's state[y/n]");
+        task = ask("\n\nchange the classe's state[y/n]");//ask if we want to change it
         if(task =='y'){
-            task = ask("\nused[y/n]");
+            task = ask("\nused[y/n]");//taking the new used
             if(task =='y')used0 = 1;
             else if (task == 'n')used0 = 0;
-            else break;
+            else break;//error
             }
-        else if (task == 'n')used0= tab[id1].used;
-        else break;
+        else if (task == 'n')used0= tab[id1].used;//keeping the old used(actuall used)
+        else break;//error
 
-        if (!modif(tab,id1,idm, name0, nm, used0)){
-            printstruct(tab);
-            ask_to_save(tab);
+        if (!modif(tab,id1,idm, name0, nm, used0)){//check if the new caracteristics are valid /error raising is handled in modif()
+            printstruct(tab);//listing tab
+            ask_to_save(tab);//save in "locaux.txt" check ask_to_save() for more details
         }
         printf("\npress enter to return to the local menu");
         while (getch() != 13)continue;
         local_menu(tab);
         break;
 
-    default:
+    default://unkown command
         local_menu(tab);
         break;
     }
 }
 
 int modif(classe *ct,int index, int id0 ,unsigned char name0[], int nmax0, unsigned char used0){
-    if (id0 < 0 ){
+    /*this function change the classe table ct by passing his pointer *ct
+      it takes the index in ct[] of the classe that we want to modify and her new carateristics
+      it raises error of invalid caracteristics
+      return 0 if succes and 1 either */
+    if (id0 < 0 ){//raise error of negative id
         printf("\nerror :id invalide try again");
         return 1;
     }
-    else if(id0 != ct[index].id)ct[index].id = id0;
+    else if(id0 != ct[index].id)ct[index].id = id0;//check if same id (non-mandatory step, we assume that writing data takes more time that reading it) + modiify
 
-    if(nmax0 < 0){
+    if(nmax0 < 0){//error raising nmax negative
         printf("\nerror :number of places can't be negatif ");
+        return 1;
     }
-    else if(nmax0 != ct[index].nmax)ct[index].nmax = nmax0;
+    else if(nmax0 != ct[index].nmax)ct[index].nmax = nmax0;//check if same nmax non-mandatory step + modify
 
-    if (used0 != ct[index].used)ct[index].used = used0;
+    if (used0 != ct[index].used)ct[index].used = used0;//check if same used non-mandatory step + modify
 
-    if (strlen(name0) < sizeof(ct[index].name) && name0 != NULL )strcpy(ct[index].name , name0);
-    else if(strcmp(ct[index].name , name0))return 0;
-    else{
-        printf("\nerror : too long name, try again little brat ");
+    if (strlen(name0) < sizeof(ct[index].name) && name0 != NULL ){//check if name pointer in non-null and if is short enough
+        if(strcmp(ct[index].name , name0))return 0;//check if same name non-mandatory step
+        strcpy(ct[index].name , name0);//modify
+    }
+    else{//error raising
+        printf("\nerror :too long name, try again");
         return 1;
     }
     return 0;
 }
 
 int checkid(classe *ct ,unsigned int n){
-    /* check id retourne l'index de la classe d'id n si elle exite sinon retourn -1 valeur  impossible d'id*/
+    /*this function returns the index of a classe defined by its id
+      if it cant find it, it returns -1*/
     int i;
     for(i = 0; i < _msize(ct)/sizeof(classe); i++){
         if (ct[i].id == n)return i;
