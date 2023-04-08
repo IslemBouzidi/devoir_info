@@ -17,20 +17,21 @@ void printaffect( affectation *affect){//afficher la tableau des emplacement
     int j=0, size;
     size = _msize(affect) / sizeof(affectation);
     for(j= 0; j < size; j++ )printf("Nom :%-20s\tPrenom :%-20s\tGroupe :%-5d\tLocal :%-5s\tEmplacement :%-5d\n",affect[j].name,affect[j].surname,affect[j].groupe,affect[j].nlocal, affect[j].emp);
-     
+    return ;
 }
-void main_print(){
+void main_print(void){//main_menu
     printf("Veuillez appuyer sur la lettre entre crochet pour executer la tache:\n1. Gestion des [L]ocaux\n2. Affectation des [E]mplacements\n3. [P]roduction des listes\n4. [S]ortie\n");
-
+    return ;
 }
-void local_print(){
+void local_print(void){//local_menu
     printf("Veuillez appuyer sur la lettre entre crochet pour executer la tache :\n1. [L]ister les locaux\n2. [A]jouter un local\n3. [M]odifier un local\n4. [S]upprimer un local\n5. [R]etour au menu principal\n\n");
-
+    return ;
 }
-void list_print(){
+void list_print(void){//list_menu
     printf("Veuillez appuyer sur la lettre entre crochet pour executer la tache :\n1. Construction de la liste [G]lobale\n2. Construction des listes [L]ocales\n3. [R]etour au menu principal\n\n");
+    return ;
 }
-void print_local_lists( classe *a){
+void print_local_lists( classe *a){//writing txt file of afectations classified by local
     char file_name[16], line[100],i=0;
     for(int i=0;i< _msize(a)/sizeof(classe);i++)
     {
@@ -48,8 +49,10 @@ void print_local_lists( classe *a){
             }
         else printf("%s local is not used yet",a[i].name);
     }
-    }
+    return ;
+}
 
-void clear(){
-    system("@cls||clear");//clean prompt
+void clear(void){//clean prompt
+    system("@cls||clear");
+    return ;
 }

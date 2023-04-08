@@ -11,61 +11,74 @@
 #include "..\Header\graphics.h"
 
 
-//locaux 
+//------------------------------------classe-functions-----------------------------------
 classe *readlocal(classe *t){
     /*
-       this functions takes the classe's table pointer (classe *) which is stored in the data
+       this functions takes as argument the classe's table pointer classe: *t 
        open\read the file "locaux.txt"
        extract and classify data from the file by parsing char by char
-       this function uses atoi which is a stdlib's function which convert str to int
+       store the data in *t
+       this function uses atoi() which is a stdlib's function which convert str to int
        reallocate dynamically as needed
        close the file
-       return the pointer of the classified ,filled classe table (classe *)
+       return the pointer of the classified ,filled classe table *t
+       raise error of not enough storage by returning NULL
     */
+
     unsigned short class_index = 0;
     unsigned char lettre = 0,type_index = 0, word[32], j = 0;
 
     FILE *fic =fopen("locaux.txt", "r");// opening file
 
     if (fic == NULL){//unfound file error raising
-        printf("unfound file Error, please put the file \"locaux.txt\" in the folder\n");
+        printf("\nunfound file Error, please put the file \"locaux.txt\" in the folder \"Sources\"\n");
         fclose(fic);
+        printf("\npress enter to return to the local menu");
+        while (getch() != 13)continue;
         return NULL;
     }
-    do{ // reading the file char by char
-        lettre = fgetc(fic);
-        if(lettre == 9 || lettre == 10 || lettre == 255){// gestion of tabulation and back to the line or end of file
+    do{ 
+        lettre = fgetc(fic);// reading the file char by char
+        if(lettre == 9 || lettre == 10 || lettre == 255){// gestion of tabulation :9 and back to the line :10 or end of file : 255
             word[j] = 0; //end of read word
             switch (type_index){
             case 0://id
                 if(class_index){// add an element in class_tab if it isn't the first data line classe_tab contains already one element
-                t = append_class(t);
-                if(t == NULL){//lack of storage error raising
-                    printf("insufisent storage error, may the file contains too much data\n");
-                    fclose(fic);
-                    return NULL;}
+                    t = append_class(t);//reallocate t check append_classe()
+                    if(t == NULL){//lack of storage error raising
+                        printf("\ninsufisent storage error, may the file contains too much data\n");
+                        fclose(fic);
+                        printf("\npress enter to return to the main menu");
+                        while (getch() != 13)continue;
+                        return NULL;
+                    }
                 }
                 t[class_index].id = atoi(word); 
                 break;
+
             case 1://name
                 strcpy(t[class_index].name, word);
                 break;
+
             case 2://place number
                 t[class_index].nmax = atoi(word);
                 break;
+
             case 3://usable
                 t[class_index].used = atoi(word);
-                class_index++;//may the file contains one other line of data
+                class_index++; //indicate new line for init type_ubdex at 0
                 break;
+
             default:
                 break;
+
             }
-            j = 0;//init index of word
+            j = 0;//init index of word[]
             type_index = (type_index+1) % 4;
         }
         else{
-            word[j] = lettre;//store the word char by char
-            j++;
+            word[j] = lettre;//store the read char in word
+            j++;//incrementing the index
         }
     }while(lettre != 255);//end of file
     fclose(fic);
@@ -74,10 +87,10 @@ classe *readlocal(classe *t){
 
 
 classe *append_class(classe *t){
-    /* this function take a type :"classe" table pointer (classe *) and add one classe(storage) to the table
-     return pointer to the new table (classe *)  */
-    size_t size;
-    size = _msize(t) + sizeof(classe);
+    /*this function take a classe's table pointer classe *t 
+      add one classe(storage) to the table
+      return pointer to the new table (classe *)  */
+    size_t size = _msize(t) + sizeof(classe);
     t = (classe *)realloc(t, size);
     return t;
 }
@@ -544,50 +557,51 @@ int production_local(affectation *affect, classe *a){
     return 1;
 }
 
-//other
+//-------------------------------------other-functions-------------------------------------------------------
 unsigned char ask(unsigned char request[]){
     /* this fontcion is called to read one char input on the keyboard and empty the buffer by fflush()
     in stdlib library and take one string argument "the request"*/
     unsigned char task;
-    if(request != NULL) printf("%s :", request);
+    if(request == NULL)return 0;
+    printf("%s :", request);
     task = getchar();
-    fflush(stdin);//our hero nhabek hbibi
+    fflush(stdin);
     return task;    
 }
 
 unsigned char* ask_s(unsigned char *task ,unsigned char request[]){
-    /* this fontcion scanf on the keybord a string and place it on the adress task and also empty the buffer*/
+    /*like ask() but it returns a string*/
     unsigned char i= 0;
-    if(request != NULL) printf("%s :", request);
-    fgets(task,20,stdin);
+    if(request == NULL)return NULL; 
+    printf("%s :", request);
+    fgets(task,20,stdin);//reading from the terminal
     for(i; i<20; i++){
         if(task[i] == 10)task[i] = 0;// to fix a bug:fgets read also the back to line char
     }
-    fflush(stdin);//our hero nhabek hbibi
+    fflush(stdin);
     return task;    
 }
 unsigned int ask_d(unsigned char request[]){
-    /* this fontcion is called to read one char input on the keyboard and empty the buffer by fflush()
-    in stdlib library and take one string argument "the request"*/
+    /*like ask() but it returns an int (less safer than ask() because of scanf())*/
     unsigned int i;
-    if(request != NULL) printf("%s :", request);
+    if(request == NULL)return 0;
+    printf("%s :", request);
     scanf("%d",&i);
-    fflush(stdin);//our hero nhabek hbibi
+    fflush(stdin);
     return i;
 }
 
 unsigned int ask_f(unsigned char request[]){
-    /* this fontcion is called to read one char input on the keyboard and empty the buffer by fflush()
-    in stdlib library and take one string argument "the request"*/
+    /*like ask_d() but it returns float*/
     float i;
-    if(request != NULL) printf("%s :", request);
+    if(request == NULL)return 0;
+    printf("%s :", request);
     scanf("%f",&i);
-    fflush(stdin);//our hero nhabek hbibi
+    fflush(stdin);
     return i;
 }
 
-void *kill(void *tab){
-    //free any type of array
+void *kill(void *tab){//free any type of array
     free(tab);
     tab = NULL;
     return tab;

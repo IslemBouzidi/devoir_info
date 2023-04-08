@@ -3,7 +3,7 @@
 #include "classes.h" 
 #include "graphics.h"
 
-// declaration of functions:
+
 classe *readlocal(classe *t);
 classe *append_class(classe *t);
 student *readeleve(student *);
@@ -22,7 +22,6 @@ void permute(classe *tab,unsigned int index1,unsigned int index2);
 void *kill(void *tab);  
 void list_menu(affectation *affect, classe *a); 
 int affectation_list(affectation *affect);
-
 int production_local(affectation *affect, classe *a);
 int compare(const void *x, const void *y);
 int cmp_name(const void* a, const void* b);
@@ -31,4 +30,5 @@ void savelocal(classe *tab);
 void ask_to_save(classe *tab);
 unsigned int ask_f(unsigned char request[]);
 char emp_error(emplacement *t1, student *t2);
+
 #endif
