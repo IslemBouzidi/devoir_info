@@ -36,7 +36,7 @@ int main(void){
         case 'L': //local
             if (bool_local){//reading "local.txt" for the first time
                 class_tab = readlocal(class_tab);//init the classified tab of classes
-                if (stu_tab == NULL)run =0 ;//error raising for more details check readlocal()
+                if (stu_tab == NULL)break;//error raising for more details check readlocal()
                 else bool_local = 0;
             }
             local_menu(class_tab);//recursive function
@@ -49,12 +49,12 @@ int main(void){
         case 'E':
             if (bool_stu){//reading "eleve.txt" for the first time
                 stu_tab = readeleve(stu_tab);//init the classified tab of students
-                if (stu_tab == NULL)run =0 ;//error raising for more details check readeleve()
+                if (stu_tab == NULL)break;//error raising for more details check readeleve()
                 else bool_stu = 0;
             }
             if (bool_local){//reading "local.txt" for the first time
                 class_tab = readlocal(class_tab);//init the classified tab of classes
-                if (stu_tab == NULL)run =0 ;//error raising for more details check readlocal()
+                if (stu_tab == NULL)break;//error raising for more details check readlocal()
                 else bool_local = 0;
             }
 

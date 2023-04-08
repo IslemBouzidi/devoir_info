@@ -31,7 +31,7 @@ void list_print(void){//list_menu
     printf("Veuillez appuyer sur la lettre entre crochet pour executer la tache :\n1. Construction de la liste [G]lobale\n2. Construction des listes [L]ocales\n3. [R]etour au menu principal\n\n");
     return ;
 }
-void print_local_lists( classe *a){//writing txt file of afectations classified by local
+void print_local_lists( classe *a){//writing .txt file of afectations classified by local
     char file_name[16], line[100],i=0;
     for(int i=0;i< _msize(a)/sizeof(classe);i++)
     {

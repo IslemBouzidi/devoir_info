@@ -33,7 +33,7 @@ classe *readlocal(classe *t){
     if (fic == NULL){//unfound file error raising
         printf("\nunfound file Error, please put the file \"locaux.txt\" in the folder \"Sources\"\n");
         fclose(fic);
-        printf("\npress enter to return to the local menu");
+        printf("\npress enter to return to the main menu");
         while (getch() != 13)continue;
         return NULL;
     }
@@ -81,7 +81,7 @@ classe *readlocal(classe *t){
             j++;//incrementing the index
         }
     }while(lettre != 255);//end of file
-    fclose(fic);
+    fclose(fic);//closing
     return t;
 }
 
@@ -226,6 +226,7 @@ void local_menu(classe *tab){
         local_menu(tab);
         break;
     }
+    return ;
 }
 
 int modif(classe *ct,int index, int id0 ,unsigned char name0[], int nmax0, unsigned char used0){
@@ -269,60 +270,68 @@ int checkid(classe *ct ,unsigned int n){
 }
 
 classe *delete(classe *tab, unsigned int index){
+    /*this function delete the classe defined by his index in tab by 
+      permuting it with the last element
+      and reallocate tab with one classe less
+      return the new pointer*/
     permute(tab, index, _msize(tab)/sizeof(classe)-1);
     tab = (classe *)realloc(tab, _msize(tab) - sizeof(classe));
     return tab;
 }
 
 void permute(classe *tab,unsigned int index1,unsigned int index2){
+    /*this function permut two classes of *tab bu copying one of them c1 */
     classe c1 = tab[index1];
     if(index1 == index2)return ;
-    /*
-    if ((_msize(tab)/sizeof(classe) < index1)||(_msize(tab)/sizeof(classe) < index1)){
-        printf("error index out of range");
-        return ;
-    }*/ //inutile etant donne qu'on verifie si l'index est valable avant d'entrer dans delete()
     modif(tab,index1,tab[index2].id,tab[index2].name, tab[index2].nmax, tab[index2].used);
     modif(tab,index2,c1.id,c1.name, c1.nmax, c1.used);
     return ;
 }
 
 void savelocal(classe *tab){
-    FILE *fic = fopen("locaux.txt","w");
+    /*this function save the classe tab by writing it on a file "locaux.txt"
+      we erase all data from the file then we write new data*/
+    FILE *fic = fopen("locaux.txt","w");//open
     int i;
-    if (fic == NULL){
+    if (fic == NULL){//raise error
         printf("error : oppening \"locaux.txt\" is impossible");
+        fclose(fic);
         return;
     }
-    for(i = 0; i < _msize(tab)/sizeof(classe); i++ )fprintf(fic, "%d\t%s\t%d\t%d\n",tab[i].id, tab[i].name,tab[i].nmax,tab[i].used);
-    fclose(fic);
+    for(i = 0; i < _msize(tab)/sizeof(classe); i++ )fprintf(fic, "%d\t%s\t%d\t%d\n",tab[i].id, tab[i].name,tab[i].nmax,tab[i].used);//write
+    fclose(fic);//closing
     return;
 }
 
 void ask_to_save(classe *tab){
+    /*this recursive function ask to save the data */
     char task;
     task = ask("\nsave the changes[y/n]");
     if(task =='y')savelocal(tab);
     else if (task == 'n')return;
-    else ask_to_save(tab);
+    else {
+        printf("\nerror :unkown command");
+        ask_to_save(tab);//recursive (reask if unkown command)
 }
 
-//student part
 
-
+//--------------------------------student-part-----------------------------------------------
 student *readeleve(student *t){
     /*
-       this functions takes the classe's table pointer (classe *) which is stored in the data
-       open\read the file "locaux.txt"
+       this functions takes as argument the student's table pointer student: *t 
+       open\read the file "eleves.txt"
        extract and classify data from the file by parsing char by char
-       this function uses atoi which is a stdlib's function which convert str to int
+       store the data in *t
+       this function uses atoi() which is a stdlib's function which convert str to int
        reallocate dynamically as needed
        close the file
-       return the pointer of the classified ,filled classe table (classe *)
+       return the pointer of the classified ,filled student table *t
+       raise error of not enough storage by returning NULL
     */
     unsigned short stu_index = 0;
     unsigned char lettre = 0,type_index = 0, word[32], j = 0;
     FILE *fic =fopen("eleves.txt", "r");// opening file
+
     if (fic == NULL){//unfound file error raising
         printf("unfound file Error, please put the file \"eleves.txt\" in the folder\n");
         fclose(fic);
@@ -330,38 +339,40 @@ student *readeleve(student *t){
     }
     do{ // reading the file char by char
         lettre = fgetc(fic);
-        if(lettre == 9 || lettre == 10 || lettre == 255){// gestion of tabulation and back to the line or end of file
+        if(lettre == 9 || lettre == 10 || lettre == 255){// gestion of tabulation:9 and back to the line:10 or end of file:255
             word[j] = 0; //end of red word
+
             switch (type_index){
             case 0://name
-                if(stu_index){// add an element in class_tab if it isn't the first data line classe_tab contains already one element
-                t = append_stud(t);
-                if(t == NULL){//lack of storage error raising
-                    printf("insufisent storage error, may the file contains too much data\n");
-                    fclose(fic);
-                    return NULL;}
+                if(stu_index){// add one element in class_tab if it isn't the first data line classe_tab contains already one element
+                    t = append_stud(t);//add one element
+                    if(t == NULL){//lack of storage error raising
+                        printf("\nerror :insufisent storage, may the file contains too much data\n");
+                        fclose(fic);
+                        return NULL;
+                    }
                 }
-                strcpy(t[stu_index].name ,word); 
+                strcpy(t[stu_index].name ,word); //name
                 break;
             case 1://surname
-                strcpy(t[stu_index].surname, word);
+                strcpy(t[stu_index].surname, word);//surname
                 break;
             case 2://group
-                t[stu_index].groupe = atoi(word);
-                stu_index++;
+                t[stu_index].groupe = atoi(word);//groupe
+                stu_index++;//indicates another line
                 break;
             default:
                 break;
             }
-            j = 0;//init index of word
+            j = 0;//init the index of word[]
             type_index = (type_index+1) % 3;
         }
         else{
-            word[j] = lettre;//store the word char by char
-            j++;
+            word[j] = lettre;//storing char in word
+            j++;//increamenting word's index
         }
     }while(lettre != 255);//end of file
-    fclose(fic);
+    fclose(fic);//closing
     return t;
 }
 
@@ -507,23 +518,26 @@ int affectation_list(affectation *affect){
     return 1;
 }
 
-// Production of lists part
-// compare fonction will be used in qsort, to order students in a alphabatic order 
+//-----------------------------list's-production-functions------------------------------------
+
 int compare(const void *x, const void *y){ 
+    // compare fonction will be used in qsort, to order students in a alphabatic order 
     affectation *stud1= (affectation *)x;
     affectation *stud2= (affectation *)y;
     return strcmp(stud1->name, stud2->name); // we use -> because it's a pointer
 }
 
-// this fonction will sort affactation table according to local and the numbre of place
+
 int cmp_name(const void *a, const void *b){
+    // this fonction will sort affactation table according to local and the numbre of place
     int diff= strcmp(((affectation*)a)->nlocal, ((affectation*)b)->nlocal);
     if(diff)
         return -diff;
     return ((affectation*)a)->emp -((affectation*)b)->emp;
 }
-// this fonction will create affglob.txt
+
 int list_global(affectation *affect){
+    // this fonction will create affglob.txt
     FILE* fp_out = fopen("affglob.txt", "w");
     if (fp_out == NULL) {
         printf("Error: could not create file 'affglob.txt'\n");
@@ -536,8 +550,9 @@ int list_global(affectation *affect){
     fclose(fp_out);
     return 1;
 }
-// this fonction will create AffNomDuLocal.txt files
+
 int production_local(affectation *affect, classe *a){
+    // this fonction will create AffNomDuLocal.txt files
     int j=0,k=0;
     char file_name[16];
     for(int i=0;i< _msize(a)/sizeof(classe);i++)
