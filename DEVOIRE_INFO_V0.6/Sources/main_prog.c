@@ -85,6 +85,7 @@ int main(void){
                 break;
             }
             affect_tab = init_affect(affect_tab,stu_tab);//init affect_tab(name, surname, groupe) check init_affect()
+            if(affect_tab == NULL)break;//error raising
             randomlocal(emp_tab, affect_tab);//randomize places 
             printaffect(affect_tab);//printing affect_tab
             affectation_list(affect_tab);//writing "affectation.txt"

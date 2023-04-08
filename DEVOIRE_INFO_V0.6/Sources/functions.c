@@ -378,14 +378,14 @@ student *readeleve(student *t){
 
 
 student *append_stud(student *t){
-    /* this function take a type :"student" table pointer (student *) and add one student(storage) to the table
-     return pointer to the new table (student *)  */
-    size_t size;
-    size = _msize(t) + sizeof(student);
+    /*this function take a classe's table pointer classe *t 
+      add one classe(storage) to the table
+      return pointer to the new table (classe *)  */
+    size_t size = _msize(t) + sizeof(student);
     return (student *)realloc(t, size);
 }
 
-//affectation part
+// -------------------------affectation-part------------------------------------------
 void list_menu(affectation *affect, classe *a)
 {
     unsigned char task=0;
@@ -400,8 +400,8 @@ void list_menu(affectation *affect, classe *a)
         case 'G':// Constraction de la list globale
             qsort(affect,_msize(affect)/sizeof(affectation),sizeof(affectation),compare); // sorting affact tab in a alphabatic ordre 
             printaffect(affect); // printing the results
-            list_global(affect); // saving the results in a txt file
-            printf("\npress enter to return to the local menu"); // return to list menu
+            list_global(affect); // saving the results in a .txt file
+            printf("\npress enter to return to the list menu"); // return to list menu
             while (getch() != 13)continue;
             list_menu(affect,a);
             break;
@@ -409,9 +409,9 @@ void list_menu(affectation *affect, classe *a)
         case 'L':// Constraction des lists locals 
 
             qsort(affect,_msize(affect)/sizeof(affectation),sizeof(affectation),cmp_name); // grouping the data by local and sorting it by order of emplacement 
-            production_local(affect,a);// saving the results in txt files
+            production_local(affect,a);// saving the results in .txt files
             print_local_lists(a); // printing the lists
-            printf("\npress enter to return to the local menu");// return to list menu
+            printf("\npress enter to return to the list menu");// return to list menu
             while (getch() != 13)continue;
             list_menu(affect,a); 
             break;
@@ -420,59 +420,77 @@ void list_menu(affectation *affect, classe *a)
             break;
             
         default :
+            printf("\nerror :unknown command\n");
+            printf("\npress enter to return to the list menu");// return to list menu
+            while (getch() != 13)continue;
+            list_menu(affect, a);
             break;
     }
     return;
 }
     
-// affectation is a new data type, we fill the name and surname columns with the data in student class
+
 affectation *init_affect(affectation *a, student *b){
-    size_t size;
+    /*this functions fill affectation table *a with all the names, surname, groupes of classe's table *b
+      and allocate dynamicaly the */
+    size_t size = _msize(b)*sizeof(affectation)/sizeof(student);;
     int i;
-    size = _msize(b)*sizeof(affectation)/sizeof(student);
     a = (affectation *)realloc(a, size);
-    for(i =0 ; i< (size/sizeof(affectation)) ; i++){
-        strcpy(a[i].name,b[i].name);
-        strcpy(a[i].surname,b[i].surname);
-        a[i].groupe = b[i].groupe;
+    if(a == NULL){//error raising
+        printf("\nerror :not enough storage");
+        printf("\npress enter to return to the main menu");// return to list menu
+        while (getch() != 13)continue;
+        return NULL;
+    }
+    for(i =0 ; i< (size/sizeof(affectation)) ; i++){//fill a[] with data
+        strcpy(a[i].name,b[i].name);//name
+        strcpy(a[i].surname,b[i].surname);//surname
+        a[i].groupe = b[i].groupe;//groupe
     }
     return a;
 }
 
-emplacement *place_list(emplacement *tab , classe *a, float pourcentage){ //tab have to be freed in an another function , used =0 is handled in this part
-    /* les pourcentage sont arrondis toujours a la valeur superieur en utilisant ceil
-        la liste tab est deja randomisé*/
+emplacement *place_list(emplacement *tab , classe *a, float pourcentage){
+    /*this function init the emplacement table *tab 
+      it fills tab with names , nmax of locals in classe's table *a
+      init at one count for randomlocal()
+      the classes taked in cosideration have to satisfy two conditions:
+      1/used = 0(not used)
+      2/the user confirm that the classe can be taken in consideration
+      take a percentage of number of places that can be used==> the number of places is ceiled
+      */
     unsigned char task;
     size_t size =_msize(a)/sizeof(classe);
-    int i, k =0, n; 
-    unsigned int index;
+    int i, k =0, n;
+    if(tab == NULL)tab = (emplacement *)calloc(1, sizeof(emplacement));//allocate one emplacement if tab = NULL
+    else if(_msize(tab)>sizeof(emplacement))tab = (emplacement *)realloc(tab, sizeof(emplacement));//reallocate one emplacement (already used before)
     for(i = 0 ; i < size; i++){
-        if(!a[i].used){
+        if(!a[i].used){//check if used = 0
             printf("\nid of classe :%d ",a[i].id);
             task = ask("should I take this classe in consideration[y/n]");
-            if( task =='y'){
-                n = ceil(a[i].nmax*pourcentage/100);
-                tab = (emplacement *)realloc(tab, _msize(tab) + sizeof(emplacement));
-                if(tab == NULL){
+            if( task =='y'){//taking in consideration the classe
+                n = ceil(a[i].nmax*pourcentage/100);//calculate the number of places determined by the percentage, the number is rounded to his max ceil()
+                tab = (emplacement *)realloc(tab, _msize(tab) + sizeof(emplacement));//alocate one more emplacement in emplacement's table *tab
+                if(tab == NULL){//error raise
                     printf("\nerror :not enough storage");
                     printf("\npress enter to return to the main menu");
                     while (getch() != 13)continue;
                     return NULL;
                 }
-                strcpy(tab[k].nlocal , a[i].name);
-                tab[k].emp = n;
+                strcpy(tab[k].nlocal , a[i].name);//name
+                tab[k].emp = n;//number of available places
                 tab[k].count = 1; //init the count at one for randomlocal()
-                k++;
+                k++;//increamenting the index
             }
             else if (task == 'n')continue;
-            else {
-                printf("\nincorrect answer please try again");
+            else {//unknown command
+                printf("\nerror :unkown command, please try again");
                 return NULL;
             }
         }
     }
-    tab = (emplacement *)realloc( tab,_msize(tab)-sizeof(emplacement)); //raise error if NULL
-    if(tab == NULL){
+    tab = (emplacement *)realloc( tab,_msize(tab)-sizeof(emplacement)); //delete the last element because it was initialised with one element
+    if(tab == NULL){//raising error
         printf("\nerror :not enough storage");
         printf("\npress enter to return to the main menu");
         while (getch() != 13)continue;
@@ -482,40 +500,48 @@ emplacement *place_list(emplacement *tab , classe *a, float pourcentage){ //tab 
 }
 
 char emp_error(emplacement *t1, student *t2){
+    /*this function see if there is enough emplacement for students
+      1 is failure
+      0 is success*/
     int j, sum = 0;
     for(j = 0; j < _msize(t1)/sizeof(emplacement) ; j++)sum += t1[j].emp;
     if (sum >= _msize(t2)/sizeof(student))return 0;//valid
-    else return 1;//nope
+    else return 1;//non-valid
 }
 void randomlocal(emplacement *a, affectation *b){
+    /* this function randomize the classe that the student will be affected to
+       it randomize the index of which classe he is affected to
+       it take the place: count of classe: name*/
     int i, n =_msize(a)/sizeof(emplacement) , m= _msize(b)/sizeof(affectation), index ;
     srand(time(NULL));
     for(i = 0 ; i < m  ; i++){
-        index = rand() % (n);  // if k is too big behind rand() we have to change rand()
-        strcpy(b[i].nlocal, a[index].nlocal);
-        b[i].emp = a[index].count;
-        a[index].count++;
-        if (a[index].emp == a[index].count){
-            strcpy(a[index].nlocal, a[n-1].nlocal);
-            a[index].emp = a[n-1].emp;
-            a[index].count = a[n-1].count;
-            n--;
+        index = rand() % (n);  // randomize the index of classe that i-th student is affected to
+        strcpy(b[i].nlocal, a[index].nlocal);//name of classe
+        b[i].emp = a[index].count;//the emplacement of student
+        a[index].count++;//increamenting the count of taken places in a classe
+        if (a[index].emp == a[index].count){//when a classe is full it's replaced by the last classe and decreamenting n (number of avaible classes)
+            strcpy(a[index].nlocal, a[n-1].nlocal);//name
+            a[index].emp = a[n-1].emp;//number of places
+            a[index].count = a[n-1].count;//number of taked place (count = n means n-1 places is taken)
+            n--;//decreamnenting the number of available classes
         }
     }
 }
-// creating a txt file called affectations.txt and fill with the results of random locals fonction
+
 int affectation_list(affectation *affect){
-    FILE* fp_out = fopen("affectations.txt", "w");
-    if (fp_out == NULL) {
+    // creating a .txt file called affectations.txt and fill with the results of random locals fonction
+    FILE* fp_out = fopen("affectations.txt", "w");//open
+    if (fp_out == NULL) {//error raise
         printf("Error: could not create file 'affglob.txt'\n");
-        return 1;
+        fclose(fp_out);
+        return 0;//failure
     }
-    for(int i=0; i<(_msize(affect)/sizeof(affectation));i++){
+    for(int i=0; i<(_msize(affect)/sizeof(affectation));i++){//writing
         fprintf(fp_out, "nom:%s\t prenom:%s\t groupe:%d\t local:%s\t emplacement:%d \n",affect[i].name, affect[i].surname,affect[i].groupe,affect[i].nlocal,affect[i].emp);    
     }
     printf("\n affectation.txt has been created successfully");
     fclose(fp_out);
-    return 1;
+    return 1;//success
 }
 
 //-----------------------------list's-production-functions------------------------------------
